@@ -33,7 +33,7 @@ model User {
 model BlogPost {
   id          Int     @id @default(autoincrement())
   title       String
-  content     String?
+  content     String? @db.Text
   isPublished Boolean @default(false)
   authorId    Int
 

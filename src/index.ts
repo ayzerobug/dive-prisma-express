@@ -1,6 +1,11 @@
 import express, { Express, NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
 import authRoutes from "./routes/auth"
+import protectedRoutes from "./routes/protectedRoutes"
+import AppError from "./errors/AppError";
+import { errorHandler } from "./middlewares/errorHandler";
+import { authMiddleware } from "./middlewares/authMiddleware";
+import { asyncHandler } from "./utils/asyncHandler";
 
 dotenv.config();
 
@@ -15,25 +20,13 @@ app.get("/", (req, res) => {
 
 
 app.use("/auth", authRoutes)
+app.use("/app", authMiddleware, protectedRoutes)
 
-// app.use((req: Request, res: Response, next: NextFunction): any => {
-//   const response = {
-//     success: false,
-//     message: `Route ${req.path} not found`,
-//   };
+app.use((req: Request, res: Response, next: NextFunction): any => {
+  throw new AppError(`Route ${req.path} not found`, 404)
+})
 
-//   return res.status(404).json(response);
-// })
-
-
-// app.use((err: Error, req: Request, res: Response, next: NextFunction): any => {
-//   const response = {
-//     success: false,
-//     message: err.message
-//   };
-
-//   return res.status(500).json(response);
-// })
+app.use(errorHandler)
 
 // start the Express server
 app.listen(port, () => {
