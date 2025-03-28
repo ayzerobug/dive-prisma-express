@@ -1,8 +1,16 @@
 import { Request, Response, Router } from "express"
-import postRoutes from "./protected/postRoutes"
+
+import postController from "../controllers/postController";
+import { upload } from "../middlewares/multerConfig";
+
 
 const router = Router();
 
-router.use("/posts", postRoutes);
+//Post Routes
+router.get("/posts", postController.getPosts)
+router.post("/posts", upload.single('file'), postController.createPost)
+router.get("/posts/:postId", postController.getPost)
+router.get("/posts/:postId/comments", postController.getPostComments)
+router.post("/posts/:postId/comments", postController.createPostComment)
 
 export default router;
